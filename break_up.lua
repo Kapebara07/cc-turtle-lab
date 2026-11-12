@@ -1,7 +1,7 @@
--- break_up.lua v3: turtle breaks the block above itself.
+-- break_up.lua v4: turtle breaks the block above itself.
 -- Put a pickaxe into the turtle: it equips it by itself and digs up.
 
-local VERSION = "v3"
+local VERSION = "v4"
 local equipped = false
 local noPickPrinted = false
 
@@ -45,6 +45,9 @@ local function equipPickaxe()
     print("equipped " .. name)
   else
     print("equip failed: " .. tostring(err))
+    if err == "Not a valid upgrade" then
+      print("  need a NEW diamond pickaxe: no damage, no enchants")
+    end
   end
   return ok
 end
