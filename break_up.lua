@@ -1,7 +1,7 @@
--- break_up.lua v2: turtle breaks the block above itself.
+-- break_up.lua v3: turtle breaks the block above itself.
 -- Put a pickaxe into the turtle: it equips it by itself and digs up.
 
-local VERSION = "v2"
+local VERSION = "v3"
 local equipped = false
 local noPickPrinted = false
 
@@ -28,11 +28,17 @@ local function equipPickaxe()
     return false
   end
   turtle.select(slot)
-  local ok, err = turtle.equipLeft()
-  if not ok then
-    local ok2, err2 = turtle.equipRight()
-    ok, err = ok2, err2 or err
+  -- use only a FREE side so the crafting table is never swapped out
+  local leftBusy = turtle.getEquippedLeft and turtle.getEquippedLeft() ~= nil
+  local rightBusy = turtle.getEquippedRight and turtle.getEquippedRight() ~= nil
+  local ok, err
+  if not leftBusy then
+    ok, err = turtle.equipLeft()
   end
+  if not ok and not rightBusy then
+    ok, err = turtle.equipRight()
+  end
+  if not ok and err == nil then err = "no free side for the pickaxe" end
   turtle.select(1)
   if ok then
     equipped = true
